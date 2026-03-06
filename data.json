@@ -1,0 +1,6 @@
+[
+  { "id": 1, "state": "Abuja", "lga": "Gwagwalada", "name": "John Doe" },
+  { "id": 2, "state": "Abuja", "lga": "Kuje", "name": "Mary James" },
+  { "id": 3, "state": "Lagos", "lga": "Ikeja", "name": "Tunde A." },
+  { "id": 4, "state": "Lagos", "lga": "Surulere", "name": "Chidinma O." }
+]

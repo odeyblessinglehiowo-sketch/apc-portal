@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Manage Users</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4fff9;
+      margin: 0;
+    }
+
+    .topbar {
+      background: #008751;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    input, select, button {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin: 5px 0;
+    }
+
+    button {
+      background: #008751;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #006b40;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background: #e6f5ef;
+    }
+
+    .danger {
+      background: #b00020;
+    }
+
+    .danger:hover {
+      background: #8f001a;
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>Admin • Manage Users</div>
+  <a href="/dashboard.html" style="color:white;text-decoration:none;">Back to Dashboard</a>
+</div>
+
+<div class="container">
+
+  <h3>Create New User</h3>
+
+  <input id="full_name" placeholder="Full Name" /><br>
+  <input id="email" placeholder="Email" /><br>
+  <input id="password" placeholder="Temporary Password" type="password"/><br>
+
+  <select id="role">
+   <option value="lga_officer">LGA Officer</option>
+<option value="state_officer">State Officer</option>
+<option value="admin">Admin</option>
+  </select><br>
+
+  <button onclick="createUser()">Create User</button>
+
+  <h3>Existing Users</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="usersBody"></tbody>
+  </table>
+
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+if (!token) window.location.href = "/login.html";
+
+async function apiFetch(url, options = {}) {
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (res.status === 401) {
+    localStorage.removeItem("token");
+    window.location.href = "/login.html";
+    return null;
+  }
+
+  const data = await res.json();
+  return { res, data };
+}
+
+async function loadUsers() {
+  const out = await apiFetch("/api/users");
+  if (!out) return;
+
+  if (!out.res.ok) {
+    alert(out.data.message);
+    window.location.href = "/dashboard.html";
+    return;
+  }
+
+  const tbody = document.getElementById("usersBody");
+  tbody.innerHTML = "";
+
+  out.data.data.forEach(u => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${u.id}</td>
+      <td>${u.full_name}</td>
+      <td>${u.email}</td>
+      <td>${u.role}</td>
+      <td>
+        <button onclick="resetPassword(${u.id})">Reset Password</button>
+        <button class="danger" onclick="deleteUser(${u.id})">Delete</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function createUser() {
+  const full_name = document.getElementById("full_name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const role = document.getElementById("role").value;
+
+  if (!full_name || !email || !password) {
+    alert("All fields required.");
+    return;
+  }
+
+  const out = await apiFetch("/api/users", {
+    method: "POST",
+    body: JSON.stringify({ full_name, email, password, role })
+  });
+
+  if (!out) return;
+
+  alert(out.data.message);
+  loadUsers();
+}
+
+async function resetPassword(id) {
+  const newPass = prompt("Enter new password:");
+  if (!newPass) return;
+
+  const out = await apiFetch(`/api/users/${id}/password`, {
+    method: "PUT",
+    body: JSON.stringify({ password: newPass })
+  });
+
+  if (!out) return;
+  alert(out.data.message);
+}
+
+async function deleteUser(id) {
+  if (!confirm("Delete this user?")) return;
+
+  const out = await apiFetch(`/api/users/${id}`, {
+    method: "DELETE"
+  });
+
+  if (!out) return;
+  alert(out.data.message);
+  loadUsers();
+}
+
+loadUsers();
+</script>
+
+</body>
+</html>

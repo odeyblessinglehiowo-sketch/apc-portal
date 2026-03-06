@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portal Login</title>
+    <style>
+      :root{
+        --ng-green:#008751;
+        --ng-green-dark:#006b40;
+        --white:#ffffff;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        display:flex;
+        height:100vh;
+        align-items:center;
+        justify-content:center;
+        background: linear-gradient(135deg, var(--ng-green-dark), var(--ng-green));
+        margin:0;
+      }
+      .card {
+        background: rgba(255,255,255,.96);
+        padding:24px;
+        border-radius:14px;
+        width:340px;
+        box-shadow:0 14px 30px rgba(0,0,0,.20);
+        border: 1px solid rgba(0,135,81,.18);
+      }
+      h2 { margin:0 0 10px 0; color: var(--ng-green-dark); }
+      input, button {
+        width:100%;
+        padding:12px;
+        margin-top:10px;
+        border-radius:10px;
+        border:1px solid rgba(0,0,0,.12);
+        box-sizing:border-box;
+      }
+      input:focus{ outline: 2px solid rgba(0,135,81,.25); border-color: rgba(0,135,81,.35); }
+      button {
+        background: var(--ng-green);
+        color: var(--white);
+        border:none;
+        cursor:pointer;
+        font-weight:800;
+      }
+      button:hover { background: var(--ng-green-dark); }
+      .err { color:#b00020; margin-top:10px; font-size:14px; }
+      .hint { font-size:12px; opacity:.75; margin-top:12px; color:#223; }
+      .back { display:inline-block; margin-top: 10px; font-size: 13px; color: var(--ng-green-dark); }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Login</h2>
+      <input id="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Password" />
+      <button id="btn">Sign in</button>
+
+      <div class="err" id="err"></div>
+      
+      <a class="back" href="/">← Back to Home</a>
+    </div>
+
+    <script>
+      const existingToken = localStorage.getItem("token");
+      if (existingToken) window.location.href = "/dashboard.html";
+
+      const btn = document.getElementById("btn");
+      const err = document.getElementById("err");
+
+      btn.addEventListener("click", async () => {
+        err.textContent = "";
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (!email || !password) {
+          err.textContent = "Please enter email and password.";
+          return;
+        }
+
+        try {
+          const res = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok) {
+            err.textContent = data.message || "Login failed.";
+            return;
+          }
+
+          localStorage.setItem("token", data.token);
+          window.location.href = "/dashboard.html";
+        } catch (e) {
+          err.textContent = "Network error. Try again.";
+        }
+      });
+    </script>
+  </body>
+</html>

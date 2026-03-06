@@ -1,0 +1,653 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard</title>
+    <style>
+      :root{
+        --ng-green:#008751;
+        --ng-green-dark:#006b40;
+        --white:#ffffff;
+        --bg:#f4fff9;
+        --text:#0d1412;
+        --muted:#66756f;
+        --border: rgba(0,0,0,.12);
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background: var(--bg);
+        padding: 0;
+        margin: 0;
+        color: var(--text);
+      }
+
+      .topbar{
+        background: linear-gradient(135deg, var(--ng-green-dark), var(--ng-green));
+        color: var(--white);
+        padding: 16px 20px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-shadow: 0 10px 20px rgba(0,0,0,.10);
+      }
+      .topbar .title{
+        font-weight: 900;
+        letter-spacing:.3px;
+      }
+      .topbar a{
+        color: rgba(255,255,255,.95);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .container{
+        padding: 20px;
+        width: min(1200px, 100%);
+        margin: 0 auto;
+      }
+
+      .top {
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-bottom:12px;
+        align-items:center;
+      }
+      input, button, select {
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        
+        box-sizing: border-box;
+        font-size: 14px;
+      }
+      input:focus, select:focus{
+        outline: 2px solid rgba(0,135,81,.22);
+        border-color: rgba(0,135,81,.35);
+      }
+
+      button {
+        background: var(--ng-green);
+        color: var(--white);
+        border: none;
+        cursor: pointer;
+        font-weight: 800;
+      }
+      button:hover { background: var(--ng-green-dark); }
+      button:disabled{
+        opacity: .55;
+        cursor:not-allowed;
+      }
+
+      .btn-secondary{
+        background: #ffffff;
+        color: var(--ng-green-dark);
+        border: 1px solid rgba(0,0,0,.15);
+        font-weight: 900;
+      }
+      .btn-secondary:hover{
+        background: rgba(255,255,255,.85);
+      }
+
+      .logout{
+        margin-left:auto;
+        background:#ffffff;
+        color:#006b40;
+        border: 1px solid rgba(255,255,255,.7);
+        font-weight: 900;
+      }
+      .logout:hover{
+        background: rgba(255,255,255,.85);
+      }
+
+      .meta { margin: 10px 0; color: #1c2a24; font-weight: 700; }
+
+      .errorBox {
+        background: #fff;
+        border-radius: 14px;
+        padding: 12px;
+        margin-bottom: 12px;
+        color: #b00020;
+        border: 1px solid rgba(176,0,32,.18);
+        display: none;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 12px 24px rgba(0,0,0,.06);
+      }
+      th, td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+        vertical-align: top;
+      }
+      th{
+        background: rgba(0,135,81,.07);
+        color: var(--ng-green-dark);
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .actions{
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+      }
+      .btn-small{
+        padding: 8px 10px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 800;
+      }
+      .btn-edit{
+        background:#0f766e;
+      }
+      .btn-edit:hover{
+        background:#0b5f58;
+      }
+      .btn-danger{
+        background:#b00020;
+      }
+      .btn-danger:hover{
+        background:#8f001a;
+      }
+
+      /* Modal */
+      .modalBack{
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.45);
+        display: none;
+        align-items:center;
+        justify-content:center;
+        padding: 20px;
+        z-index: 999;
+      }
+      .modal{
+        width: min(640px, 100%);
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,.25);
+      }
+      .modalHeader{
+        padding: 14px 16px;
+        background: rgba(0,135,81,.07);
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+      }
+      .modalHeader h3{
+        margin: 0;
+        color: var(--ng-green-dark);
+        font-weight: 900;
+      }
+      .modalBody{
+        padding: 16px;
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .modalBody .full{
+        grid-column: 1 / -1;
+      }
+      .hint{
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: -6px;
+      }
+      .modalFooter{
+        padding: 14px 16px;
+        display:flex;
+        gap:10px;
+        justify-content:flex-end;
+        border-top: 1px solid rgba(0,0,0,.08);
+      }
+      .closeX{
+        cursor:pointer;
+        font-weight: 900;
+        color: var(--ng-green-dark);
+        user-select:none;
+      }
+
+      @media (max-width: 640px){
+        .modalBody{ grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="topbar">
+      <div class="title">Database Portal • Search Records</div>
+      <a href="/">Home</a>
+    </div>
+
+    <div class="container">
+      <div class="top">
+        <input id="state" placeholder="State (e.g. Lagos)" />
+        <input id="lga" placeholder="LGA (e.g. Ikeja)" />
+        <button id="searchBtn">Search</button>
+
+        <button class="btn-secondary" id="addBtn">+ Add Record</button>
+
+        <button class="logout" id="logoutBtn">Logout</button>
+      </div>
+
+      <div class="top" style="margin-top:10px;">
+        <button class="btn-secondary" id="prevBtn">← Prev</button>
+        <button class="btn-secondary" id="nextBtn">Next →</button>
+
+        <span style="font-weight:800;">Page:</span>
+        <span id="pageLabel">1</span>
+
+        <span style="font-weight:800;margin-left:10px;">Per page:</span>
+        <select id="limitSel">
+          <option value="25">25</option>
+          <option value="50" selected>50</option>
+          <option value="100">100</option>
+          <option value="200">200</option>
+        </select>
+
+        <button id="usersBtn" class="btn-secondary" style="display:none;margin-left:auto;">Users</button>
+      </div>
+
+      <div class="errorBox" id="errorBox"></div>
+      <div class="meta" id="meta"></div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>S/N</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>State</th>
+            <th>LGA</th>
+            <th>Ward</th>
+            <th>Date Registered</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- ADD/EDIT MODAL -->
+    <div class="modalBack" id="modalBack">
+      <div class="modal">
+        <div class="modalHeader">
+          <h3 id="modalTitle">Add Record</h3>
+          <div class="closeX" id="closeModal">✕</div>
+        </div>
+
+        <div class="modalBody">
+          <div class="full">
+            <input id="m_full_name" placeholder="Full Name" />
+          </div>
+
+          <div>
+            <input id="m_phone" placeholder="Phone (e.g. 080...)" />
+            <div class="hint">Numbers only (preferred)</div>
+          </div>
+
+          <div>
+            <input id="m_date_registered" type="date" />
+            <div class="hint">Leave empty to auto-use today</div>
+          </div>
+
+          <div>
+            <input id="m_state" placeholder="State" />
+          </div>
+
+          <div>
+            <input id="m_lga" placeholder="LGA" />
+          </div>
+
+          <div class="full">
+            <input id="m_ward" placeholder="Ward (e.g. Ward 01)" />
+          </div>
+        </div>
+
+        <div class="modalFooter">
+          <button class="btn-secondary" id="cancelModal">Cancel</button>
+          <button id="saveModal">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ---- AUTH ----
+      const token = localStorage.getItem("token");
+      if (!token) window.location.href = "/login.html";
+
+      const tbody = document.getElementById("tbody");
+      const meta = document.getElementById("meta");
+      const errorBox = document.getElementById("errorBox");
+
+      // Pagination state
+      let currentPage = 1;
+      let currentLimit = 50;
+      let lastTotal = 0;
+
+      const pageLabel = document.getElementById("pageLabel");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const limitSel = document.getElementById("limitSel");
+
+      limitSel.value = String(currentLimit);
+
+      function showError(msg) {
+        errorBox.textContent = msg;
+        errorBox.style.display = "block";
+      }
+      function clearError() {
+        errorBox.textContent = "";
+        errorBox.style.display = "none";
+      }
+
+      function handleUnauthorized() {
+        localStorage.removeItem("token");
+        window.location.href = "/login.html";
+      }
+
+      async function apiFetch(url, options = {}) {
+        const res = await fetch(url, {
+          ...options,
+          headers: {
+            ...(options.headers || {}),
+            Authorization: "Bearer " + token,
+          },
+        });
+
+        if (res.status === 401) {
+          handleUnauthorized();
+          return null;
+        }
+
+        const text = await res.text();
+        let data = {};
+        try { data = text ? JSON.parse(text) : {}; } catch { data = { message: text }; }
+
+        return { res, data };
+      }
+
+      // ---- LOGOUT ----
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("token");
+        window.location.href = "/login.html";
+      });
+
+      // ---- SHOW USERS BUTTON FOR ADMIN ----
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        if (payload.role === "admin") {
+          document.getElementById("usersBtn").style.display = "inline-block";
+        }
+      } catch (e) {}
+
+      document.getElementById("usersBtn").addEventListener("click", () => {
+        window.location.href = "/users.html";
+      });
+
+      // ---- RENDER ----
+      function safe(v) { return (v ?? "").toString(); }
+
+      function renderRows(rows) {
+        tbody.innerHTML = "";
+
+        rows.forEach((r, index) => {
+          const tr = document.createElement("tr");
+
+          // ✅ pagination-aware numbering
+          const rowNumber = ((currentPage - 1) * currentLimit) + index + 1;
+
+          const name = r.name ?? r.full_name ?? "";
+          const phone = r.phone ?? "";
+          const state = r.state ?? "";
+          const lga = r.lga ?? "";
+          const ward = r.ward ?? "";
+          let date_registered = r.date_registered ?? "";
+
+if (date_registered) {
+  date_registered = date_registered.split("T")[0];
+}
+
+          tr.innerHTML = `
+            <td>${rowNumber}</td>
+            <td>${safe(name)}</td>
+            <td>${safe(phone)}</td>
+            <td>${safe(state)}</td>
+            <td>${safe(lga)}</td>
+            <td>${safe(ward)}</td>
+            <td>${safe(date_registered)}</td>
+            <td>
+              <div class="actions">
+                <button class="btn-small btn-edit" data-action="edit" data-id="${r.id}">Edit</button>
+                <button class="btn-small btn-danger" data-action="del" data-id="${r.id}">Delete</button>
+              </div>
+            </td>
+          `;
+
+          tr.dataset.record = JSON.stringify(r);
+          tbody.appendChild(tr);
+        });
+      }
+
+      // ---- LOAD / SEARCH ----
+      async function loadRecords() {
+        clearError();
+
+        const state = document.getElementById("state").value.trim();
+        const lga = document.getElementById("lga").value.trim();
+
+        const params = new URLSearchParams();
+        if (state) params.set("state", state);
+        if (lga) params.set("lga", lga);
+
+        // ✅ pagination params
+        params.set("page", String(currentPage));
+        params.set("limit", String(currentLimit));
+
+        const out = await apiFetch("/api/records?" + params.toString());
+        if (!out) return;
+
+        const { res, data } = out;
+        if (!res.ok) {
+          showError(data.message || "Failed to fetch records.");
+          return;
+        }
+
+        lastTotal = Number(data.total || 0);
+        const rows = data.data || [];
+
+        const totalPages = Math.max(Math.ceil(lastTotal / currentLimit), 1);
+
+        pageLabel.textContent = String(currentPage);
+        prevBtn.disabled = currentPage <= 1;
+        nextBtn.disabled = currentPage >= totalPages;
+
+        meta.textContent = lastTotal
+          ? `Total results: ${lastTotal} • Page ${currentPage} of ${totalPages}`
+          : "No results found.";
+
+        renderRows(rows);
+      }
+
+      document.getElementById("searchBtn").addEventListener("click", () => {
+        currentPage = 1;
+        loadRecords();
+      });
+
+      // Pagination events
+      prevBtn.addEventListener("click", async () => {
+        if (currentPage > 1) {
+          currentPage--;
+          await loadRecords();
+        }
+      });
+
+      nextBtn.addEventListener("click", async () => {
+        const totalPages = Math.max(Math.ceil(lastTotal / currentLimit), 1);
+        if (currentPage < totalPages) {
+          currentPage++;
+          await loadRecords();
+        }
+      });
+
+      limitSel.addEventListener("change", async () => {
+        currentLimit = Number(limitSel.value);
+        currentPage = 1;
+        await loadRecords();
+      });
+
+      // ---- MODAL STATE ----
+      const modalBack = document.getElementById("modalBack");
+      const modalTitle = document.getElementById("modalTitle");
+      const saveModalBtn = document.getElementById("saveModal");
+
+      const m_full_name = document.getElementById("m_full_name");
+      const m_phone = document.getElementById("m_phone");
+      const m_state = document.getElementById("m_state");
+      const m_lga = document.getElementById("m_lga");
+      const m_ward = document.getElementById("m_ward");
+      const m_date_registered = document.getElementById("m_date_registered");
+
+      let mode = "add"; // "add" | "edit"
+      let editId = null;
+
+      function openModal(newMode, record = null) {
+        mode = newMode;
+        clearError();
+
+        if (mode === "add") {
+          modalTitle.textContent = "Add Record";
+          saveModalBtn.textContent = "Create";
+          editId = null;
+
+          m_full_name.value = "";
+          m_phone.value = "";
+          m_state.value = "";
+          m_lga.value = "";
+          m_ward.value = "";
+          m_date_registered.value = "";
+        } else {
+          modalTitle.textContent = "Edit Record";
+          saveModalBtn.textContent = "Update";
+          editId = record.id;
+
+          m_full_name.value = record.full_name ?? record.name ?? "";
+          m_phone.value = record.phone ?? "";
+          m_state.value = record.state ?? "";
+          m_lga.value = record.lga ?? "";
+          m_ward.value = record.ward ?? "";
+          m_date_registered.value = record.date_registered ?? "";
+        }
+
+        modalBack.style.display = "flex";
+      }
+
+      function closeModal() {
+        modalBack.style.display = "none";
+      }
+
+      document.getElementById("addBtn").addEventListener("click", () => openModal("add"));
+      document.getElementById("closeModal").addEventListener("click", closeModal);
+      document.getElementById("cancelModal").addEventListener("click", closeModal);
+      modalBack.addEventListener("click", (e) => { if (e.target === modalBack) closeModal(); });
+
+      // ---- CREATE / UPDATE ----
+      saveModalBtn.addEventListener("click", async () => {
+        clearError();
+
+        const payload = {
+          full_name: m_full_name.value.trim(),
+          phone: m_phone.value.trim(),
+          state: m_state.value.trim(),
+          lga: m_lga.value.trim(),
+          ward: m_ward.value.trim(),
+        };
+
+        const dr = m_date_registered.value ? m_date_registered.value.trim() : "";
+        if (dr) payload.date_registered = dr;
+
+        const required = ["full_name", "phone", "state", "lga", "ward"];
+        const missing = required.filter(k => !payload[k]);
+        if (missing.length) {
+          showError("Please fill: " + missing.join(", "));
+          return;
+        }
+
+        let out;
+        if (mode === "add") {
+          out = await apiFetch("/api/records", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        } else {
+          out = await apiFetch("/api/records/" + editId, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        }
+
+        if (!out) return;
+
+        const { res, data } = out;
+        if (!res.ok) {
+          showError(data.message || "Request failed.");
+          return;
+        }
+
+        closeModal();
+        await loadRecords();
+      });
+
+      // ---- EDIT / DELETE BUTTONS ----
+      tbody.addEventListener("click", async (e) => {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+
+        if (action === "edit") {
+          const tr = btn.closest("tr");
+          const record = JSON.parse(tr.dataset.record || "{}");
+          openModal("edit", record);
+          return;
+        }
+
+        if (action === "del") {
+          const ok = confirm("Are you sure you want to delete this record?");
+          if (!ok) return;
+
+          clearError();
+          const out = await apiFetch("/api/records/" + id, { method: "DELETE" });
+          if (!out) return;
+
+          const { res, data } = out;
+          if (!res.ok) {
+            showError(data.message || "Delete failed.");
+            return;
+          }
+
+          await loadRecords();
+        }
+      });
+
+      // ---- AUTO LOAD ON OPEN ----
+      loadRecords();
+    </script>
+  </body>
+</html>
