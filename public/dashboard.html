@@ -215,12 +215,16 @@
   }
 
   .actions{
-    justify-content: flex-start;
-  }
+  display: flex;
+  gap: 6px;
+}
 
   .btn-small{
-    flex: 1 1 auto;
-  }
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 8px;
+  flex: 1;
+}
 
   .modal{
     width: 100%;
@@ -314,9 +318,19 @@
         user-select:none;
       }
 
-      @media (max-width: 640px){
-        .modalBody{ grid-template-columns: 1fr; }
-      }
+      @media (max-width: 768px){
+
+  .actions{
+    display: flex;
+    gap: 6px;
+  }
+
+  .btn-small{
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+}
     </style>
   </head>
 
