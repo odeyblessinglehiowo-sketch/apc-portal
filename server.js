@@ -8,7 +8,6 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-dotenv.config();
 console.log("✅ RUNNING SERVER VERSION: FULL V5 (USERS + RECORDS + ROLE NORMALIZER)");
 
 const app = express();
