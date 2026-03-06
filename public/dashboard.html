@@ -136,6 +136,100 @@
         font-weight: 900;
         white-space: nowrap;
       }
+      .tableWrap{
+  width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 768px){
+  .topbar{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .container{
+    padding: 14px;
+  }
+
+  .top{
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .top input,
+  .top button,
+  .top select{
+    width: 100%;
+  }
+
+  .logout{
+    margin-left: 0;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr{
+    display: block;
+    width: 100%;
+  }
+
+  thead{
+    display: none;
+  }
+
+  tbody tr{
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 18px rgba(0,0,0,.05);
+    margin-bottom: 14px;
+    padding: 10px;
+  }
+
+  td{
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 10px 8px 10px 46%;
+    position: relative;
+    min-height: 22px;
+    text-align: left;
+    word-break: break-word;
+  }
+
+  td:last-child{
+    border-bottom: none;
+  }
+
+  td::before{
+    content: attr(data-label);
+    position: absolute;
+    left: 8px;
+    top: 10px;
+    width: 40%;
+    font-weight: 900;
+    color: var(--ng-green-dark);
+  }
+
+  .actions{
+    justify-content: flex-start;
+  }
+
+  .btn-small{
+    flex: 1 1 auto;
+  }
+
+  .modal{
+    width: 100%;
+  }
+
+  .modalBody{
+    grid-template-columns: 1fr;
+  }
+}
 
       .actions{
         display:flex;
@@ -264,7 +358,9 @@
       <div class="errorBox" id="errorBox"></div>
       <div class="meta" id="meta"></div>
 
-      <table>
+      <div class="tableWrap">
+  <table>
+    </div>
         <thead>
           <tr>
             <th>S/N</th>
@@ -327,7 +423,7 @@
     <script>
       // ---- AUTH ----
       const token = localStorage.getItem("token");
-      if (!token) window.location.href = "/login.html";
+      if (!token) window.location.href = "/login";
 
       const tbody = document.getElementById("tbody");
       const meta = document.getElementById("meta");
@@ -356,7 +452,7 @@
 
       function handleUnauthorized() {
         localStorage.removeItem("token");
-        window.location.href = "/login.html";
+       window.location.href = "/login";
       }
 
       async function apiFetch(url, options = {}) {
@@ -382,9 +478,9 @@
 
       // ---- LOGOUT ----
       document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("token");
-        window.location.href = "/login.html";
-      });
+  localStorage.removeItem("token");
+  window.location.href = "/";
+});
 
       // ---- SHOW USERS BUTTON FOR ADMIN ----
       try {
@@ -395,31 +491,48 @@
       } catch (e) {}
 
       document.getElementById("usersBtn").addEventListener("click", () => {
-        window.location.href = "/users.html";
+        window.location.href = "/users";
       });
 
       // ---- RENDER ----
       function safe(v) { return (v ?? "").toString(); }
 
       function renderRows(rows) {
-        tbody.innerHTML = "";
+  tbody.innerHTML = "";
 
-        rows.forEach((r, index) => {
-          const tr = document.createElement("tr");
+  rows.forEach((r, index) => {
+    const tr = document.createElement("tr");
 
-          // ✅ pagination-aware numbering
-          const rowNumber = ((currentPage - 1) * currentLimit) + index + 1;
+    const rowNumber = ((currentPage - 1) * currentLimit) + index + 1;
 
-          const name = r.name ?? r.full_name ?? "";
-          const phone = r.phone ?? "";
-          const state = r.state ?? "";
-          const lga = r.lga ?? "";
-          const ward = r.ward ?? "";
-          let date_registered = r.date_registered ?? "";
+    const name = r.name ?? r.full_name ?? "";
+    const phone = r.phone ?? "";
+    const state = r.state ?? "";
+    const lga = r.lga ?? "";
+    const ward = r.ward ?? "";
+    const date_registered = r.date_registered
+      ? String(r.date_registered).split("T")[0]
+      : "";
 
-if (date_registered) {
-  date_registered = date_registered.split("T")[0];
-}
+    tr.innerHTML = `
+      <td data-label="S/N">${rowNumber}</td>
+      <td data-label="Name">${safe(name)}</td>
+      <td data-label="Phone">${safe(phone)}</td>
+      <td data-label="State">${safe(state)}</td>
+      <td data-label="LGA">${safe(lga)}</td>
+      <td data-label="Ward">${safe(ward)}</td>
+      <td data-label="Date">${safe(date_registered)}</td>
+      <td data-label="Actions">
+        <div class="actions">
+          <button class="btn-small btn-edit" data-action="edit" data-id="${r.id}">Edit</button>
+          <button class="btn-small btn-danger" data-action="del" data-id="${r.id}">Delete</button>
+        </div>
+      </td>
+    `;
+
+    tr.dataset.record = JSON.stringify(r);
+    tbody.appendChild(tr);
+  });
 
           tr.innerHTML = `
             <td>${rowNumber}</td>
@@ -439,8 +552,7 @@ if (date_registered) {
 
           tr.dataset.record = JSON.stringify(r);
           tbody.appendChild(tr);
-        });
-      }
+        };
 
       // ---- LOAD / SEARCH ----
       async function loadRecords() {

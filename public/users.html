@@ -72,7 +72,7 @@
 
 <div class="topbar">
   <div>Admin • Manage Users</div>
-  <a href="/dashboard.html" style="color:white;text-decoration:none;">Back to Dashboard</a>
+  <a href="/dashboard" style="color:white;text-decoration:none;">Back to Dashboard</a>
 </div>
 
 <div class="container">
@@ -110,7 +110,7 @@
 
 <script>
 const token = localStorage.getItem("token");
-if (!token) window.location.href = "/login.html";
+if (!token) window.location.href = "/login";
 
 async function apiFetch(url, options = {}) {
   const res = await fetch(url, {

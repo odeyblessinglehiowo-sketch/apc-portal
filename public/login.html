@@ -64,7 +64,7 @@
 
     <script>
       const existingToken = localStorage.getItem("token");
-      if (existingToken) window.location.href = "/dashboard.html";
+      if (existingToken) window.location.href = "/dashboard";
 
       const btn = document.getElementById("btn");
       const err = document.getElementById("err");
@@ -94,7 +94,7 @@
           }
 
           localStorage.setItem("token", data.token);
-          window.location.href = "/dashboard.html";
+          window.location.href = "/dashboard";
         } catch (e) {
           err.textContent = "Network error. Try again.";
         }
