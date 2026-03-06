@@ -1,9 +1,12 @@
 const express = require("express");
 const path = require("path");
 const { Pool } = require("pg");
-const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
 dotenv.config();
 console.log("✅ RUNNING SERVER VERSION: FULL V5 (USERS + RECORDS + ROLE NORMALIZER)");
