@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-console.log("✅ RUNNING SERVER VERSION: FULL V6 (AUTHENTICATOR + USERS + RECORDS + ROLE NORMALIZER)");
+console.log("✅ RUNNING SERVER VERSION: FULL V7 (AUTHENTICATOR + USERS + EXPANDED RECORDS)");
 
 const app = express();
 app.use(express.json());
@@ -221,7 +221,12 @@ app.get("/api/records", requireAuth, async (req, res) => {
               state,
               lga,
               ward,
-              date_registered
+              polling_unit,
+              pvc_vin,
+              position,
+              age,
+              gender,
+              support_group
        FROM records
        ${whereSql}
        ORDER BY id DESC
@@ -250,7 +255,12 @@ app.post("/api/records", requireAuth, async (req, res) => {
     const state = (payload.state || "").trim();
     const lga = (payload.lga || "").trim();
     const ward = (payload.ward || "").trim();
-    const date_registered = payload.date_registered ? String(payload.date_registered).trim() : null;
+    const polling_unit = (payload.polling_unit || "").trim();
+    const pvc_vin = (payload.pvc_vin || "").trim();
+    const position = (payload.position || "").trim();
+    const age = payload.age ? String(payload.age).trim() : "";
+    const gender = (payload.gender || "").trim();
+    const support_group = (payload.support_group || "").trim();
 
     const missing = requireFields(
       { full_name, phone, state, lga, ward },
@@ -261,19 +271,24 @@ app.post("/api/records", requireAuth, async (req, res) => {
       return res.status(400).json({ message: `Missing fields: ${missing.join(", ")}` });
     }
 
-    const insertSql = date_registered
-      ? `INSERT INTO records (full_name, phone, state, lga, ward, date_registered)
-         VALUES ($1,$2,$3,$4,$5,$6)
-         RETURNING id, full_name, phone, state, lga, ward, date_registered`
-      : `INSERT INTO records (full_name, phone, state, lga, ward)
-         VALUES ($1,$2,$3,$4,$5)
-         RETURNING id, full_name, phone, state, lga, ward, date_registered`;
-
-    const vals = date_registered
-      ? [full_name, phone, state, lga, ward, date_registered]
-      : [full_name, phone, state, lga, ward];
-
-    const created = await pool.query(insertSql, vals);
+    const created = await pool.query(
+      `INSERT INTO records (
+        full_name,
+        phone,
+        state,
+        lga,
+        ward,
+        polling_unit,
+        pvc_vin,
+        position,
+        age,
+        gender,
+        support_group
+      )
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+      RETURNING id, full_name, phone, state, lga, ward, polling_unit, pvc_vin, position, age, gender, support_group`,
+      [full_name, phone, state, lga, ward, polling_unit, pvc_vin, position, age, gender, support_group]
+    );
 
     await logAudit({
       userId: req.user?.id,
@@ -296,7 +311,7 @@ app.put("/api/records/:id", requireAuth, async (req, res) => {
     if (!id) return res.status(400).json({ message: "Invalid record id" });
 
     const oldRes = await pool.query(
-      `SELECT id, full_name, phone, state, lga, ward, date_registered
+      `SELECT id, full_name, phone, state, lga, ward, polling_unit, pvc_vin, position, age, gender, support_group
        FROM records WHERE id=$1`,
       [id]
     );
@@ -311,10 +326,14 @@ app.put("/api/records/:id", requireAuth, async (req, res) => {
     const state = (payload.state || oldRecord.state || "").trim();
     const lga = (payload.lga || oldRecord.lga || "").trim();
     const ward = (payload.ward || oldRecord.ward || "").trim();
-    const date_registered =
-      payload.date_registered !== undefined && payload.date_registered !== null && String(payload.date_registered).trim() !== ""
-        ? String(payload.date_registered).trim()
-        : oldRecord.date_registered;
+    const polling_unit = (payload.polling_unit || oldRecord.polling_unit || "").trim();
+    const pvc_vin = (payload.pvc_vin || oldRecord.pvc_vin || "").trim();
+    const position = (payload.position || oldRecord.position || "").trim();
+    const age = payload.age !== undefined && payload.age !== null && String(payload.age).trim() !== ""
+      ? String(payload.age).trim()
+      : (oldRecord.age || "");
+    const gender = (payload.gender || oldRecord.gender || "").trim();
+    const support_group = (payload.support_group || oldRecord.support_group || "").trim();
 
     const missing = requireFields(
       { full_name, phone, state, lga, ward },
@@ -327,10 +346,21 @@ app.put("/api/records/:id", requireAuth, async (req, res) => {
 
     const updatedRes = await pool.query(
       `UPDATE records
-       SET full_name=$1, phone=$2, state=$3, lga=$4, ward=$5, date_registered=$6, updated_at=NOW()
-       WHERE id=$7
-       RETURNING id, full_name, phone, state, lga, ward, date_registered`,
-      [full_name, phone, state, lga, ward, date_registered, id]
+       SET full_name=$1,
+           phone=$2,
+           state=$3,
+           lga=$4,
+           ward=$5,
+           polling_unit=$6,
+           pvc_vin=$7,
+           position=$8,
+           age=$9,
+           gender=$10,
+           support_group=$11,
+           updated_at=NOW()
+       WHERE id=$12
+       RETURNING id, full_name, phone, state, lga, ward, polling_unit, pvc_vin, position, age, gender, support_group`,
+      [full_name, phone, state, lga, ward, polling_unit, pvc_vin, position, age, gender, support_group, id]
     );
 
     await logAudit({
@@ -354,7 +384,7 @@ app.delete("/api/records/:id", requireAuth, async (req, res) => {
     if (!id) return res.status(400).json({ message: "Invalid record id" });
 
     const oldRes = await pool.query(
-      `SELECT id, full_name, phone, state, lga, ward, date_registered
+      `SELECT id, full_name, phone, state, lga, ward, polling_unit, pvc_vin, position, age, gender, support_group
        FROM records WHERE id=$1`,
       [id]
     );

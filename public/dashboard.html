@@ -53,7 +53,7 @@
 
       .container{
         padding: 20px;
-        width: min(1200px, 100%);
+        width: min(1400px, 100%);
         margin: 0 auto;
       }
 
@@ -153,13 +153,13 @@
         border-bottom: 1px solid #eee;
         text-align: left;
         vertical-align: top;
+        white-space: nowrap;
       }
 
       th{
         background: rgba(0,135,81,.07);
         color: var(--ng-green-dark);
         font-weight: 900;
-        white-space: nowrap;
       }
 
       .actions{
@@ -203,7 +203,7 @@
       }
 
       .modal{
-        width: min(640px, 100%);
+        width: min(820px, 100%);
         background: #fff;
         border-radius: 16px;
         overflow: hidden;
@@ -314,6 +314,7 @@
           min-height: 22px;
           text-align: left;
           word-break: break-word;
+          white-space: normal;
         }
 
         td:last-child{
@@ -402,7 +403,12 @@
               <th>State</th>
               <th>LGA</th>
               <th>Ward</th>
-              <th>Date Registered</th>
+              <th>Polling Unit</th>
+              <th>PVC/VIN</th>
+              <th>Position</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Support Group</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -429,11 +435,6 @@
           </div>
 
           <div>
-            <input id="m_date_registered" type="date" />
-            <div class="hint">Leave empty to auto-use today</div>
-          </div>
-
-          <div>
             <input id="m_state" placeholder="State" />
           </div>
 
@@ -441,8 +442,32 @@
             <input id="m_lga" placeholder="LGA" />
           </div>
 
-          <div class="full">
+          <div>
             <input id="m_ward" placeholder="Ward (e.g. Ward 01)" />
+          </div>
+
+          <div>
+            <input id="m_polling_unit" placeholder="Polling Unit" />
+          </div>
+
+          <div>
+            <input id="m_pvc_vin" placeholder="PVC/VIN" />
+          </div>
+
+          <div>
+            <input id="m_position" placeholder="Position" />
+          </div>
+
+          <div>
+            <input id="m_age" placeholder="Age" />
+          </div>
+
+          <div>
+            <input id="m_gender" placeholder="Gender" />
+          </div>
+
+          <div class="full">
+            <input id="m_support_group" placeholder="Support Group" />
           </div>
         </div>
 
@@ -454,7 +479,6 @@
     </div>
 
     <script>
-      // ---- AUTH ----
       const token = localStorage.getItem("token");
       const authVerified = sessionStorage.getItem("authVerified");
 
@@ -521,14 +545,12 @@
         return { res, data };
       }
 
-      // ---- LOGOUT ----
       document.getElementById("logoutBtn").addEventListener("click", () => {
         localStorage.removeItem("token");
         sessionStorage.removeItem("authVerified");
         window.location.href = "/";
       });
 
-      // ---- SHOW USERS BUTTON FOR ADMIN ----
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
         if (payload.role === "admin") {
@@ -556,9 +578,12 @@
           const state = r.state ?? "";
           const lga = r.lga ?? "";
           const ward = r.ward ?? "";
-          const date_registered = r.date_registered
-            ? String(r.date_registered).split("T")[0]
-            : "";
+          const polling_unit = r.polling_unit ?? "";
+          const pvc_vin = r.pvc_vin ?? "";
+          const position = r.position ?? "";
+          const age = r.age ?? "";
+          const gender = r.gender ?? "";
+          const support_group = r.support_group ?? "";
 
           tr.innerHTML = `
             <td data-label="S/N">${rowNumber}</td>
@@ -567,7 +592,12 @@
             <td data-label="State">${safe(state)}</td>
             <td data-label="LGA">${safe(lga)}</td>
             <td data-label="Ward">${safe(ward)}</td>
-            <td data-label="Date Registered">${safe(date_registered)}</td>
+            <td data-label="Polling Unit">${safe(polling_unit)}</td>
+            <td data-label="PVC/VIN">${safe(pvc_vin)}</td>
+            <td data-label="Position">${safe(position)}</td>
+            <td data-label="Age">${safe(age)}</td>
+            <td data-label="Gender">${safe(gender)}</td>
+            <td data-label="Support Group">${safe(support_group)}</td>
             <td data-label="Actions">
               <div class="actions">
                 <button class="btn-small btn-edit" data-action="edit" data-id="${r.id}">Edit</button>
@@ -581,7 +611,6 @@
         });
       }
 
-      // ---- LOAD / SEARCH ----
       async function loadRecords() {
         clearError();
 
@@ -646,7 +675,6 @@
         await loadRecords();
       });
 
-      // ---- MODAL STATE ----
       const modalBack = document.getElementById("modalBack");
       const modalTitle = document.getElementById("modalTitle");
       const saveModalBtn = document.getElementById("saveModal");
@@ -656,7 +684,12 @@
       const m_state = document.getElementById("m_state");
       const m_lga = document.getElementById("m_lga");
       const m_ward = document.getElementById("m_ward");
-      const m_date_registered = document.getElementById("m_date_registered");
+      const m_polling_unit = document.getElementById("m_polling_unit");
+      const m_pvc_vin = document.getElementById("m_pvc_vin");
+      const m_position = document.getElementById("m_position");
+      const m_age = document.getElementById("m_age");
+      const m_gender = document.getElementById("m_gender");
+      const m_support_group = document.getElementById("m_support_group");
 
       let mode = "add";
       let editId = null;
@@ -675,7 +708,12 @@
           m_state.value = "";
           m_lga.value = "";
           m_ward.value = "";
-          m_date_registered.value = "";
+          m_polling_unit.value = "";
+          m_pvc_vin.value = "";
+          m_position.value = "";
+          m_age.value = "";
+          m_gender.value = "";
+          m_support_group.value = "";
         } else {
           modalTitle.textContent = "Edit Record";
           saveModalBtn.textContent = "Update";
@@ -686,9 +724,12 @@
           m_state.value = record.state ?? "";
           m_lga.value = record.lga ?? "";
           m_ward.value = record.ward ?? "";
-          m_date_registered.value = record.date_registered
-            ? String(record.date_registered).split("T")[0]
-            : "";
+          m_polling_unit.value = record.polling_unit ?? "";
+          m_pvc_vin.value = record.pvc_vin ?? "";
+          m_position.value = record.position ?? "";
+          m_age.value = record.age ?? "";
+          m_gender.value = record.gender ?? "";
+          m_support_group.value = record.support_group ?? "";
         }
 
         modalBack.style.display = "flex";
@@ -701,11 +742,11 @@
       document.getElementById("addBtn").addEventListener("click", () => openModal("add"));
       document.getElementById("closeModal").addEventListener("click", closeModal);
       document.getElementById("cancelModal").addEventListener("click", closeModal);
+
       modalBack.addEventListener("click", (e) => {
         if (e.target === modalBack) closeModal();
       });
 
-      // ---- CREATE / UPDATE ----
       saveModalBtn.addEventListener("click", async () => {
         clearError();
 
@@ -715,10 +756,13 @@
           state: m_state.value.trim(),
           lga: m_lga.value.trim(),
           ward: m_ward.value.trim(),
+          polling_unit: m_polling_unit.value.trim(),
+          pvc_vin: m_pvc_vin.value.trim(),
+          position: m_position.value.trim(),
+          age: m_age.value.trim(),
+          gender: m_gender.value.trim(),
+          support_group: m_support_group.value.trim(),
         };
-
-        const dr = m_date_registered.value ? m_date_registered.value.trim() : "";
-        if (dr) payload.date_registered = dr;
 
         const required = ["full_name", "phone", "state", "lga", "ward"];
         const missing = required.filter(k => !payload[k]);
@@ -757,7 +801,6 @@
         await loadRecords();
       });
 
-      // ---- EDIT / DELETE BUTTONS ----
       tbody.addEventListener("click", async (e) => {
         const btn = e.target.closest("button");
         if (!btn) return;
@@ -791,7 +834,6 @@
         }
       });
 
-      // ---- AUTO LOAD ON OPEN ----
       loadRecords();
     </script>
   </body>
