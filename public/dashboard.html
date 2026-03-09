@@ -14,7 +14,12 @@
         --muted:#66756f;
         --border: rgba(0,0,0,.12);
       }
-      body {
+
+      *{
+        box-sizing:border-box;
+      }
+
+      body{
         font-family: Arial, sans-serif;
         background: var(--bg);
         padding: 0;
@@ -34,10 +39,12 @@
         z-index: 10;
         box-shadow: 0 10px 20px rgba(0,0,0,.10);
       }
+
       .topbar .title{
         font-weight: 900;
         letter-spacing:.3px;
       }
+
       .topbar a{
         color: rgba(255,255,255,.95);
         font-weight: 700;
@@ -50,34 +57,39 @@
         margin: 0 auto;
       }
 
-      .top {
+      .top{
         display:flex;
         gap:10px;
         flex-wrap:wrap;
         margin-bottom:12px;
         align-items:center;
       }
-      input, button, select {
+
+      input, button, select{
         padding: 12px;
         border-radius: 10px;
         border: 1px solid var(--border);
-        
         box-sizing: border-box;
         font-size: 14px;
       }
+
       input:focus, select:focus{
         outline: 2px solid rgba(0,135,81,.22);
         border-color: rgba(0,135,81,.35);
       }
 
-      button {
+      button{
         background: var(--ng-green);
         color: var(--white);
         border: none;
         cursor: pointer;
         font-weight: 800;
       }
-      button:hover { background: var(--ng-green-dark); }
+
+      button:hover{
+        background: var(--ng-green-dark);
+      }
+
       button:disabled{
         opacity: .55;
         cursor:not-allowed;
@@ -89,6 +101,7 @@
         border: 1px solid rgba(0,0,0,.15);
         font-weight: 900;
       }
+
       .btn-secondary:hover{
         background: rgba(255,255,255,.85);
       }
@@ -100,13 +113,18 @@
         border: 1px solid rgba(255,255,255,.7);
         font-weight: 900;
       }
+
       .logout:hover{
         background: rgba(255,255,255,.85);
       }
 
-      .meta { margin: 10px 0; color: #1c2a24; font-weight: 700; }
+      .meta{
+        margin: 10px 0;
+        color: #1c2a24;
+        font-weight: 700;
+      }
 
-      .errorBox {
+      .errorBox{
         background: #fff;
         border-radius: 14px;
         padding: 12px;
@@ -116,7 +134,12 @@
         display: none;
       }
 
-      table {
+      .tableWrap{
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      table{
         width: 100%;
         border-collapse: collapse;
         background: #fff;
@@ -124,144 +147,50 @@
         overflow: hidden;
         box-shadow: 0 12px 24px rgba(0,0,0,.06);
       }
-      th, td {
+
+      th, td{
         padding: 12px;
         border-bottom: 1px solid #eee;
         text-align: left;
         vertical-align: top;
       }
+
       th{
         background: rgba(0,135,81,.07);
         color: var(--ng-green-dark);
         font-weight: 900;
         white-space: nowrap;
       }
-      .tableWrap{
-  width: 100%;
-  overflow-x: auto;
-}
-
-@media (max-width: 768px){
-  .topbar{
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .container{
-    padding: 14px;
-  }
-
-  .top{
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .top input,
-  .top button,
-  .top select{
-    width: 100%;
-  }
-
-  .logout{
-    margin-left: 0;
-  }
-
-  table,
-  thead,
-  tbody,
-  th,
-  td,
-  tr{
-    display: block;
-    width: 100%;
-  }
-
-  thead{
-    display: none;
-  }
-
-  tbody tr{
-    background: #fff;
-    border: 1px solid rgba(0,0,0,.08);
-    border-radius: 14px;
-    box-shadow: 0 8px 18px rgba(0,0,0,.05);
-    margin-bottom: 14px;
-    padding: 10px;
-  }
-
-  td{
-    border: none;
-    border-bottom: 1px solid #f0f0f0;
-    padding: 10px 8px 10px 46%;
-    position: relative;
-    min-height: 22px;
-    text-align: left;
-    word-break: break-word;
-  }
-
-  td:last-child{
-    border-bottom: none;
-  }
-
-  td::before{
-    content: attr(data-label);
-    position: absolute;
-    left: 8px;
-    top: 10px;
-    width: 40%;
-    font-weight: 900;
-    color: var(--ng-green-dark);
-  }
-
-  .actions{
-  display: flex;
-  gap: 6px;
-  justify-content: flex-start;
-}
-
-  .btn-small{
-  padding: 5px 8px;
-  font-size: 12px;
-  border-radius: 6px;
-  width: auto;
-  flex: 0 0 auto;
-}
-
-  .modal{
-    width: 100%;
-  }
-
-  .modalBody{
-    grid-template-columns: 1fr;
-  }
-}
 
       .actions{
         display:flex;
-        gap:4px;
+        gap:6px;
         flex-wrap:wrap;
       }
+
       .btn-small{
-        padding: 5px 5px;
-        border-radius: 13px;
-        font-size: 9px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 12px;
         font-weight: 800;
       }
+
       .btn-edit{
         background:#0f766e;
       }
+
       .btn-edit:hover{
         background:#0b5f58;
       }
+
       .btn-danger{
         background:#b00020;
       }
+
       .btn-danger:hover{
         background:#8f001a;
       }
 
-      /* Modal */
       .modalBack{
         position: fixed;
         inset: 0;
@@ -272,6 +201,7 @@
         padding: 20px;
         z-index: 999;
       }
+
       .modal{
         width: min(640px, 100%);
         background: #fff;
@@ -279,6 +209,7 @@
         overflow: hidden;
         box-shadow: 0 20px 50px rgba(0,0,0,.25);
       }
+
       .modalHeader{
         padding: 14px 16px;
         background: rgba(0,135,81,.07);
@@ -287,25 +218,30 @@
         justify-content:space-between;
         gap:10px;
       }
+
       .modalHeader h3{
         margin: 0;
         color: var(--ng-green-dark);
         font-weight: 900;
       }
+
       .modalBody{
         padding: 16px;
         display:grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px;
       }
+
       .modalBody .full{
         grid-column: 1 / -1;
       }
+
       .hint{
         color: var(--muted);
         font-size: 12px;
         margin-top: -6px;
       }
+
       .modalFooter{
         padding: 14px 16px;
         display:flex;
@@ -313,6 +249,7 @@
         justify-content:flex-end;
         border-top: 1px solid rgba(0,0,0,.08);
       }
+
       .closeX{
         cursor:pointer;
         font-weight: 900;
@@ -321,19 +258,101 @@
       }
 
       @media (max-width: 768px){
+        .topbar{
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
 
-  .actions{
-    display: flex;
-    gap: 6px;
-    flex-wrap: nowrap;
-  }
+        .container{
+          padding: 14px;
+        }
 
-  .btn-small{
-    padding: 4px 8px;
-    font-size: 11px;
-  }
+        .top{
+          flex-direction: column;
+          align-items: stretch;
+        }
 
-}
+        .top input,
+        .top button,
+        .top select{
+          width: 100%;
+        }
+
+        .logout{
+          margin-left: 0;
+        }
+
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr{
+          display: block;
+          width: 100%;
+        }
+
+        thead{
+          display: none;
+        }
+
+        tbody tr{
+          background: #fff;
+          border: 1px solid rgba(0,0,0,.08);
+          border-radius: 14px;
+          box-shadow: 0 8px 18px rgba(0,0,0,.05);
+          margin-bottom: 14px;
+          padding: 10px;
+        }
+
+        td{
+          border: none;
+          border-bottom: 1px solid #f0f0f0;
+          padding: 10px 8px 10px 46%;
+          position: relative;
+          min-height: 22px;
+          text-align: left;
+          word-break: break-word;
+        }
+
+        td:last-child{
+          border-bottom: none;
+        }
+
+        td::before{
+          content: attr(data-label);
+          position: absolute;
+          left: 8px;
+          top: 10px;
+          width: 40%;
+          font-weight: 900;
+          color: var(--ng-green-dark);
+        }
+
+        .actions{
+          display:flex;
+          gap:6px;
+          justify-content:flex-start;
+          flex-wrap:nowrap;
+        }
+
+        .btn-small{
+          padding: 5px 8px;
+          font-size: 12px;
+          border-radius: 6px;
+          width: auto;
+          flex: 0 0 auto;
+        }
+
+        .modal{
+          width: 100%;
+        }
+
+        .modalBody{
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
 
@@ -348,9 +367,7 @@
         <input id="state" placeholder="State (e.g. Lagos)" />
         <input id="lga" placeholder="LGA (e.g. Ikeja)" />
         <button id="searchBtn">Search</button>
-
         <button class="btn-secondary" id="addBtn">+ Add Record</button>
-
         <button class="logout" id="logoutBtn">Logout</button>
       </div>
 
@@ -376,25 +393,24 @@
       <div class="meta" id="meta"></div>
 
       <div class="tableWrap">
-  <table>
-    </div>
-        <thead>
-          <tr>
-            <th>S/N</th>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>State</th>
-            <th>LGA</th>
-            <th>Ward</th>
-            <th>Date Registered</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
+        <table>
+          <thead>
+            <tr>
+              <th>S/N</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>State</th>
+              <th>LGA</th>
+              <th>Ward</th>
+              <th>Date Registered</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- ADD/EDIT MODAL -->
     <div class="modalBack" id="modalBack">
       <div class="modal">
         <div class="modalHeader">
@@ -440,13 +456,18 @@
     <script>
       // ---- AUTH ----
       const token = localStorage.getItem("token");
-      if (!token) window.location.href = "/login";
+      const authVerified = sessionStorage.getItem("authVerified");
+
+      if (!token) {
+        window.location.href = "/login";
+      } else if (authVerified !== "true") {
+        window.location.href = "/authenticator";
+      }
 
       const tbody = document.getElementById("tbody");
       const meta = document.getElementById("meta");
       const errorBox = document.getElementById("errorBox");
 
-      // Pagination state
       let currentPage = 1;
       let currentLimit = 50;
       let lastTotal = 0;
@@ -462,6 +483,7 @@
         errorBox.textContent = msg;
         errorBox.style.display = "block";
       }
+
       function clearError() {
         errorBox.textContent = "";
         errorBox.style.display = "none";
@@ -469,7 +491,8 @@
 
       function handleUnauthorized() {
         localStorage.removeItem("token");
-       window.location.href = "/login";
+        sessionStorage.removeItem("authVerified");
+        window.location.href = "/login";
       }
 
       async function apiFetch(url, options = {}) {
@@ -488,16 +511,22 @@
 
         const text = await res.text();
         let data = {};
-        try { data = text ? JSON.parse(text) : {}; } catch { data = { message: text }; }
+
+        try {
+          data = text ? JSON.parse(text) : {};
+        } catch {
+          data = { message: text };
+        }
 
         return { res, data };
       }
 
       // ---- LOGOUT ----
       document.getElementById("logoutBtn").addEventListener("click", () => {
-  localStorage.removeItem("token");
-  window.location.href = "/";
-});
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("authVerified");
+        window.location.href = "/";
+      });
 
       // ---- SHOW USERS BUTTON FOR ADMIN ----
       try {
@@ -511,55 +540,35 @@
         window.location.href = "/users";
       });
 
-      // ---- RENDER ----
-      function safe(v) { return (v ?? "").toString(); }
+      function safe(v) {
+        return (v ?? "").toString();
+      }
 
       function renderRows(rows) {
-  tbody.innerHTML = "";
+        tbody.innerHTML = "";
 
-  rows.forEach((r, index) => {
-    const tr = document.createElement("tr");
+        rows.forEach((r, index) => {
+          const tr = document.createElement("tr");
+          const rowNumber = ((currentPage - 1) * currentLimit) + index + 1;
 
-    const rowNumber = ((currentPage - 1) * currentLimit) + index + 1;
-
-    const name = r.name ?? r.full_name ?? "";
-    const phone = r.phone ?? "";
-    const state = r.state ?? "";
-    const lga = r.lga ?? "";
-    const ward = r.ward ?? "";
-    const date_registered = r.date_registered
-      ? String(r.date_registered).split("T")[0]
-      : "";
-
-    tr.innerHTML = `
-      <td data-label="S/N">${rowNumber}</td>
-      <td data-label="Name">${safe(name)}</td>
-      <td data-label="Phone">${safe(phone)}</td>
-      <td data-label="State">${safe(state)}</td>
-      <td data-label="LGA">${safe(lga)}</td>
-      <td data-label="Ward">${safe(ward)}</td>
-      <td data-label="Date">${safe(date_registered)}</td>
-      <td data-label="Actions">
-        <div class="actions">
-          <button class="btn-small btn-edit" data-action="edit" data-id="${r.id}">Edit</button>
-          <button class="btn-small btn-danger" data-action="del" data-id="${r.id}">Delete</button>
-        </div>
-      </td>
-    `;
-
-    tr.dataset.record = JSON.stringify(r);
-    tbody.appendChild(tr);
-  });
+          const name = r.name ?? r.full_name ?? "";
+          const phone = r.phone ?? "";
+          const state = r.state ?? "";
+          const lga = r.lga ?? "";
+          const ward = r.ward ?? "";
+          const date_registered = r.date_registered
+            ? String(r.date_registered).split("T")[0]
+            : "";
 
           tr.innerHTML = `
-            <td>${rowNumber}</td>
-            <td>${safe(name)}</td>
-            <td>${safe(phone)}</td>
-            <td>${safe(state)}</td>
-            <td>${safe(lga)}</td>
-            <td>${safe(ward)}</td>
-            <td>${safe(date_registered)}</td>
-            <td>
+            <td data-label="S/N">${rowNumber}</td>
+            <td data-label="Name">${safe(name)}</td>
+            <td data-label="Phone">${safe(phone)}</td>
+            <td data-label="State">${safe(state)}</td>
+            <td data-label="LGA">${safe(lga)}</td>
+            <td data-label="Ward">${safe(ward)}</td>
+            <td data-label="Date Registered">${safe(date_registered)}</td>
+            <td data-label="Actions">
               <div class="actions">
                 <button class="btn-small btn-edit" data-action="edit" data-id="${r.id}">Edit</button>
                 <button class="btn-small btn-danger" data-action="del" data-id="${r.id}">Delete</button>
@@ -569,7 +578,8 @@
 
           tr.dataset.record = JSON.stringify(r);
           tbody.appendChild(tr);
-        };
+        });
+      }
 
       // ---- LOAD / SEARCH ----
       async function loadRecords() {
@@ -582,7 +592,6 @@
         if (state) params.set("state", state);
         if (lga) params.set("lga", lga);
 
-        // ✅ pagination params
         params.set("page", String(currentPage));
         params.set("limit", String(currentLimit));
 
@@ -590,6 +599,7 @@
         if (!out) return;
 
         const { res, data } = out;
+
         if (!res.ok) {
           showError(data.message || "Failed to fetch records.");
           return;
@@ -597,7 +607,6 @@
 
         lastTotal = Number(data.total || 0);
         const rows = data.data || [];
-
         const totalPages = Math.max(Math.ceil(lastTotal / currentLimit), 1);
 
         pageLabel.textContent = String(currentPage);
@@ -616,7 +625,6 @@
         loadRecords();
       });
 
-      // Pagination events
       prevBtn.addEventListener("click", async () => {
         if (currentPage > 1) {
           currentPage--;
@@ -650,7 +658,7 @@
       const m_ward = document.getElementById("m_ward");
       const m_date_registered = document.getElementById("m_date_registered");
 
-      let mode = "add"; // "add" | "edit"
+      let mode = "add";
       let editId = null;
 
       function openModal(newMode, record = null) {
@@ -678,7 +686,9 @@
           m_state.value = record.state ?? "";
           m_lga.value = record.lga ?? "";
           m_ward.value = record.ward ?? "";
-          m_date_registered.value = record.date_registered ?? "";
+          m_date_registered.value = record.date_registered
+            ? String(record.date_registered).split("T")[0]
+            : "";
         }
 
         modalBack.style.display = "flex";
@@ -691,7 +701,9 @@
       document.getElementById("addBtn").addEventListener("click", () => openModal("add"));
       document.getElementById("closeModal").addEventListener("click", closeModal);
       document.getElementById("cancelModal").addEventListener("click", closeModal);
-      modalBack.addEventListener("click", (e) => { if (e.target === modalBack) closeModal(); });
+      modalBack.addEventListener("click", (e) => {
+        if (e.target === modalBack) closeModal();
+      });
 
       // ---- CREATE / UPDATE ----
       saveModalBtn.addEventListener("click", async () => {
@@ -710,12 +722,14 @@
 
         const required = ["full_name", "phone", "state", "lga", "ward"];
         const missing = required.filter(k => !payload[k]);
+
         if (missing.length) {
           showError("Please fill: " + missing.join(", "));
           return;
         }
 
         let out;
+
         if (mode === "add") {
           out = await apiFetch("/api/records", {
             method: "POST",
@@ -733,6 +747,7 @@
         if (!out) return;
 
         const { res, data } = out;
+
         if (!res.ok) {
           showError(data.message || "Request failed.");
           return;
@@ -766,6 +781,7 @@
           if (!out) return;
 
           const { res, data } = out;
+
           if (!res.ok) {
             showError(data.message || "Delete failed.");
             return;

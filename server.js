@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-console.log("✅ RUNNING SERVER VERSION: FULL V5 (USERS + RECORDS + ROLE NORMALIZER)");
+console.log("✅ RUNNING SERVER VERSION: FULL V6 (AUTHENTICATOR + USERS + RECORDS + ROLE NORMALIZER)");
 
 const app = express();
 app.use(express.json());
@@ -30,12 +30,11 @@ function cleanEmail(email) {
 function normalizeRole(role) {
   const r = String(role || "").trim().toLowerCase();
 
-  // Accept old values too (admin/state/lga)
   if (r === "admin") return "admin";
   if (r === "state" || r === "state_officer") return "state_officer";
   if (r === "lga" || r === "lga_officer") return "lga_officer";
 
-  return r; // return as-is, will be validated later
+  return r;
 }
 
 function requireFields(obj, fields) {
@@ -56,7 +55,6 @@ async function logAudit({ userId, action, recordId, oldData, newData }) {
       ]
     );
   } catch (err) {
-    // Don’t crash app because audit failed
     console.error("Audit failed:", err.message);
   }
 }
@@ -73,7 +71,7 @@ function requireAuth(req, res, next) {
 
   try {
     const payload = jwt.verify(token, JWT_SECRET);
-    req.user = payload; // {id, email, role}
+    req.user = payload;
     next();
   } catch {
     return res.status(401).json({ message: "Unauthorized. Please login." });
@@ -115,12 +113,16 @@ async function ensureAdminUser() {
 
 // ================= PAGES =================
 
-// ================= PAGES =================
-
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login.html"));
+});
+
+app.get("/authenticator", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "authenticator.html"));
 });
 
 app.get("/dashboard", (req, res) => {
@@ -131,9 +133,12 @@ app.get("/users", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "users.html"));
 });
 
+app.get("/index.html", (req, res) => res.redirect("/"));
 app.get("/login.html", (req, res) => res.redirect("/login"));
+app.get("/authenticator.html", (req, res) => res.redirect("/authenticator"));
 app.get("/dashboard.html", (req, res) => res.redirect("/dashboard"));
 app.get("/users.html", (req, res) => res.redirect("/users"));
+
 // ================= LOGIN =================
 
 app.post("/api/login", async (req, res) => {
@@ -381,7 +386,6 @@ app.delete("/api/records/:id", requireAuth, async (req, res) => {
 
 const ALLOWED_ROLES = ["admin", "state_officer", "lga_officer"];
 
-// list users
 app.get("/api/users", requireAuth, requireAdmin, async (req, res) => {
   try {
     const result = await pool.query(
@@ -396,7 +400,6 @@ app.get("/api/users", requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
-// create user
 app.post("/api/users", requireAuth, requireAdmin, async (req, res) => {
   try {
     const full_name = String(req.body?.full_name || "").trim();
@@ -443,7 +446,6 @@ app.post("/api/users", requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
-// reset password
 app.put("/api/users/:id/password", requireAuth, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
@@ -452,7 +454,10 @@ app.put("/api/users/:id/password", requireAuth, requireAdmin, async (req, res) =
     if (!id) return res.status(400).json({ message: "Invalid user id" });
     if (!password) return res.status(400).json({ message: "Password required" });
 
-    const oldRes = await pool.query(`SELECT id, full_name, email, role FROM users WHERE id=$1`, [id]);
+    const oldRes = await pool.query(
+      `SELECT id, full_name, email, role FROM users WHERE id=$1`,
+      [id]
+    );
     if (!oldRes.rows.length) return res.status(404).json({ message: "User not found" });
 
     const hash = await bcrypt.hash(password, 10);
@@ -478,7 +483,6 @@ app.put("/api/users/:id/password", requireAuth, requireAdmin, async (req, res) =
   }
 });
 
-// delete user
 app.delete("/api/users/:id", requireAuth, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
@@ -488,7 +492,10 @@ app.delete("/api/users/:id", requireAuth, requireAdmin, async (req, res) => {
       return res.status(400).json({ message: "You can’t delete your own account." });
     }
 
-    const oldRes = await pool.query(`SELECT id, full_name, email, role FROM users WHERE id=$1`, [id]);
+    const oldRes = await pool.query(
+      `SELECT id, full_name, email, role FROM users WHERE id=$1`,
+      [id]
+    );
     if (!oldRes.rows.length) return res.status(404).json({ message: "User not found" });
 
     await pool.query(`DELETE FROM users WHERE id=$1`, [id]);
@@ -513,7 +520,7 @@ app.delete("/api/users/:id", requireAuth, requireAdmin, async (req, res) => {
 app.listen(PORT, async () => {
   try {
     await ensureAdminUser();
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
   } catch (err) {
     console.error("Startup error:", err);
   }

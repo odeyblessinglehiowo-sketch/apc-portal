@@ -1,268 +1,380 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Voters database Portal</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <style>
-      :root{
-        --ng-green:#008751;
-        --ng-green-dark:#006b40;
-        --white:#ffffff;
-        --text:#0b0f0e;
-      }
-     .mapBg{
-  position:absolute;
-  inset:0;
-  background-image: url("nigeria-map.png");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 75%;
-  opacity: .22;   /* stronger visibility */
-  z-index: 2;
-  pointer-events: none;
-}
-      *{ box-sizing:border-box; }
-      body{
-        margin:0;
-        font-family: Arial, sans-serif;
-        color: var(--white);
-        background: var(--ng-green-dark);
-      }
-      a{ color:inherit; text-decoration:none; }
+<title>Voters Database Portal</title>
 
-      /* Top nav */
-      .nav{
-        position: fixed;
-        top:0; left:0; right:0;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        padding: 16px 26px;
-        background: rgba(0,0,0,.18);
-        backdrop-filter: blur(8px);
-        z-index: 50;
-      }
-      .brand{
-        display:flex;
-        align-items:center;
-        gap:10px;
-        font-weight: 800;
-        letter-spacing:.2px;
-      }
-      .logo{
-        width:36px; height:36px;
-        border-radius:50%;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        background: rgba(255,255,255,.16);
-        border: 1px solid rgba(255,255,255,.20);
-        font-size: 13px;
-      }
-.logoImg{
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-  background: white;
-  border: 2px solid rgba(255,255,255,.3);
-  border-radius: 50%;
-  padding: 4px;
-}
-      .links{
-        display:flex;
-        gap:18px;
-        opacity:.95;
-        font-weight: 600;
-      }
-      .links a:hover{ text-decoration: underline; }
+<style>
 
-      /* Hero */
-      .hero{
-        min-height: 100vh;
-        padding: 90px 22px 40px;
-        position: relative;
-        overflow:hidden;
-        display:flex;
-        align-items:center;
-      }
-
-      /* Background photo (optional). If you don't want a photo, leave it as is. */
-      .bgPhoto{
-        position:absolute;
-        inset:0;
-        background-image: url("hero.jpg"); /* optional */
-        background-size: cover;
-        background-position: center;
-        opacity: .20;
-        transform: scale(1.05);
-        z-index: 0;
-      }
-
-      /* Green overlay to keep it Nigeria-themed */
-      .overlay{
-        position:absolute;
-        inset:0;
-        background: radial-gradient(circle at 20% 30%, rgba(0,135,81,.55), rgba(0,107,64,.92));
-        z-index: 1;
-      }
-
-  
-      .contentWrap{
-        position: relative;
-        z-index: 3;
-        width: min(1100px, 100%);
-        margin: 0 auto;
-        display:grid;
-        grid-template-columns: 1.2fr .8fr;
-        gap: 28px;
-        align-items:center;
-      }
-
-      .headline{
-        font-size: clamp(34px, 4vw, 60px);
-        line-height: 1.05;
-        margin: 0 0 14px 0;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: .6px;
-      }
-      .sub{
-        margin: 0 0 22px 0;
-        font-size: 16px;
-        opacity: .92;
-        max-width: 60ch;
-      }
-
-      .ctaRow{
-        display:flex;
-        gap:12px;
-        flex-wrap:wrap;
-      }
-
-      .btn{
-        padding: 12px 18px;
-        border-radius: 12px;
-        cursor:pointer;
-        font-weight: 800;
-        display:inline-flex;
-        align-items:center;
-        gap:8px;
-        border: 1px solid rgba(255,255,255,.22);
-        background: rgba(255,255,255,.10);
-      }
-      .btnPrimary{
-        background: var(--white);
-        color: var(--ng-green-dark);
-        border: none;
-      }
-      .btn:hover{ transform: translateY(-1px); transition: .12s ease; }
-
-      .card{
-        background: rgba(255,255,255,.10);
-        border: 1px solid rgba(255,255,255,.16);
-        border-radius: 16px;
-        padding: 18px;
-        box-shadow: 0 12px 30px rgba(0,0,0,.18);
-      }
-      .card h3{ margin: 0 0 10px 0; }
-      .card p{ margin:0; opacity:.92; font-size: 14px; line-height: 1.5; }
-
-      /* Sections */
-      section{
-        padding: 60px 22px;
-        background: #f4fff9;
-        color: #0d1412;
-      }
-      .wrap{
-        width:min(1100px, 100%);
-        margin: 0 auto;
-      }
-      .grid{
-        display:grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 14px;
-        margin-top: 14px;
-      }
-      .mini{
-        background: #ffffff;
-        border: 1px solid rgba(0,135,81,.15);
-        border-radius: 14px;
-        padding: 16px;
-        box-shadow: 0 10px 22px rgba(0,0,0,.06);
-      }
-      .mini b{ display:block; margin-bottom:6px; color: var(--ng-green-dark); }
-
-    footer{
-  padding: 26px 22px;
-  background: #062418;
-  color: rgba(255,255,255,.9);
-  font-size: 13px;
-  text-align: center;
-  letter-spacing: .5px;
+:root{
+--apc-green:#008751;
+--apc-green-dark:#006b40;
+--white:#ffffff;
+--text-light:rgba(255,255,255,0.95);
+--text-soft:rgba(255,255,255,0.9);
+--shadow:0 12px 30px rgba(0,0,0,0.18);
 }
 
-      @media (max-width: 900px){
-        .contentWrap{ grid-template-columns: 1fr; }
-        .mapBg{ background-position: center 55%; background-size: 92% auto; opacity: .10; }
-        .links{ gap: 12px; font-size: 14px; }
-      }
-    </style>
-  </head>
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
 
-  <body>
-    <header class="nav">
-      <div class="brand">
-       <img class="logoImg" src="coat-of-arms.png" alt="Nigeria Coat of Arms" />
-        <div>Database Portal</div>
-      </div>
-      <nav class="links">
-        <a href="#home">Home</a>
-        <a href="#about">About Us</a>
-        <a href="/login.html">Login</a>
-      </nav>
-    </header>
+body{
+font-family:Arial, sans-serif;
+background:var(--apc-green);
+color:white;
+overflow-x:hidden;
+}
 
-    <main class="hero" id="home">
-      <div class="bgPhoto"></div>
-      <div class="overlay"></div>
-      <div class="mapBg"></div>
+/* Leaders */
 
-      <div class="contentWrap">
-        <div>
-          <h1 class="headline">Electoral Database Portal</h1>
-          <p class="sub">
-            Register, verify, and manage membership records securely. Access is restricted to authorized users.
-          </p>
+.leaders{
+position:fixed;
+inset:0;
+z-index:0;
+pointer-events:none;
+}
 
-          <div class="ctaRow">
-            <a class="btn btnPrimary" href="/login.html">Register →</a>
-            <a class="btn" href="#benefits">About Us</a>
-          </div>
-        </div>
+.leaders img{
+position:absolute;
+bottom:0;
+height:92vh;
+object-fit:contain;
+opacity:0.7;
+}
 
-        <div class="card">
-          <h3>Secure Access</h3>
-          <p>
-            Only authorized users can login to view or search the database by State or LGA.
-            Activity can be tracked to improve accountability.
-          </p>
-        </div>
-      </div>
-    </main>
+.shettima{
+left:-255px;
+}
 
-    <section id="about">
-      <div class="wrap">
-        <h2>About</h2>
-        <p style="opacity:.9; max-width:70ch;">
-          This portal supports membership registration and secure access to records across all states and LGAs.
-        </p>
-      </div>
-    </section>
+.tinubu{
+right:-250px;
+}
 
-    <footer>
-      <div class="wrap">© Electoral Database Portal</div>
-    </footer>
-  </body>
+/* Green Overlay */
+
+.bg-overlay{
+position:fixed;
+inset:0;
+z-index:1;
+
+background:linear-gradient(
+to bottom,
+rgba(0,135,81,0.65) 0%,
+rgba(0,135,81,0.65) 60%,
+rgba(0,135,81,0.45) 75%,
+rgba(255,255,255,0.95) 92%,
+rgba(255,255,255,1) 100%
+);
+}
+
+/* Nigeria Map */
+
+.map-layer{
+position:fixed;
+inset:0;
+z-index:2;
+display:flex;
+justify-content:center;
+align-items:center;
+pointer-events:none;
+opacity:0.25;
+}
+
+.map-layer img{
+width:900px;
+max-width:90%;
+}
+
+/* Page Layout */
+
+.page{
+position:relative;
+z-index:3;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+/* Navbar */
+
+.navbar{
+background:rgba(0,98,58,0.92);
+backdrop-filter:blur(4px);
+padding:14px 32px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+box-shadow:var(--shadow);
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+text-decoration:none;
+color:white;
+}
+
+.brand img{
+width:42px;
+height:42px;
+border-radius:50%;
+background:white;
+}
+
+.brand span{
+font-size:1.6rem;
+font-weight:700;
+}
+
+.nav-links{
+display:flex;
+gap:28px;
+}
+
+.nav-links a{
+color:white;
+text-decoration:none;
+font-weight:600;
+}
+
+.nav-links a:hover{
+opacity:0.8;
+}
+
+/* Hero */
+
+.hero{
+flex:1;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:40px 28px 120px;
+}
+
+.hero-inner{
+width:1100px;
+max-width:100%;
+display:grid;
+grid-template-columns:1.2fr 0.8fr;
+gap:60px;
+align-items:center;
+}
+
+/* Left */
+
+.hero-left h1{
+font-size:4rem;
+line-height:0.95;
+font-weight:900;
+letter-spacing:-1px;
+margin-bottom:18px;
+}
+
+.hero-left h1 span{
+display:block;
+}
+
+.hero-left p{
+font-size:1.15rem;
+line-height:1.4;
+color:var(--text-soft);
+margin-bottom:28px;
+max-width:600px;
+}
+
+.hero-buttons{
+display:flex;
+gap:18px;
+}
+
+.btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:16px 34px;
+font-weight:800;
+border-radius:4px;
+text-decoration:none;
+cursor:pointer;
+transition:0.2s;
+}
+
+.btn-login{
+background:white;
+color:var(--apc-green-dark);
+box-shadow:var(--shadow);
+}
+
+.btn-login span{
+margin-left:10px;
+}
+
+.btn:hover{
+transform:translateY(-2px);
+}
+
+/* Right Section */
+
+.hero-right{
+display:flex;
+justify-content:flex-start;
+}
+
+.secure-box{
+max-width:380px;
+}
+
+.secure-box h3{
+font-size:2rem;
+margin-bottom:10px;
+}
+
+.secure-box p{
+font-size:1.15rem;
+line-height:1.45;
+color:var(--text-soft);
+}
+
+/* Mobile */
+
+@media(max-width:900px){
+
+.hero-inner{
+grid-template-columns:1fr;
+gap:30px;
+}
+
+.hero-left h1{
+font-size:3.5rem;
+}
+
+.leaders img{
+position:absolute;
+bottom:0;
+height:92vh;
+object-fit:contain;
+opacity:0.95;
+
+/* cinematic fade effect */
+mask-image: linear-gradient(to center, black 80%, transparent 100%);
+-webkit-mask-image: linear-gradient(to center, black 80%, transparent 100%);
+}
+
+.shettima{
+left:-60px;
+}
+
+.tinubu{
+right:-60px;
+}
+
+}
+
+@media(max-width:600px){
+
+.navbar{
+flex-direction:column;
+align-items:flex-start;
+gap:10px;
+}
+
+.hero-left h1{
+font-size:2.6rem;
+}
+
+.btn-login{
+width:100%;
+max-width:200px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Leaders -->
+
+<div class="leaders">
+<img src="images/shettima.png" class="shettima" alt="Shettima"/>
+<img src="images/tinubu.png" class="tinubu" alt="Tinubu"/>
+</div>
+
+<!-- Green Overlay -->
+
+<div class="bg-overlay"></div>
+
+<!-- Nigeria Map -->
+
+<div class="map-layer">
+<img src="images/nigeria-map.png" alt="Nigeria Map"/>
+</div>
+
+<div class="page">
+
+<header class="navbar">
+
+<a href="/" class="brand">
+<img src="images/apc-logo.png" alt="APC Logo"/>
+<span>Database Portal</span>
+</a>
+
+<nav class="nav-links">
+<a href="/">Home</a>
+<a href="/login">Login</a>
+</nav>
+
+</header>
+
+<main class="hero">
+
+<div class="hero-inner">
+
+<div class="hero-left">
+
+<h1>
+VOTERS<br>
+<span>DATABASE PORTAL</span>
+</h1>
+
+<p>
+Harmonized Data base of APC Members, Support groups and Voters
+</p>
+
+<div class="hero-buttons">
+<a href="/login" class="btn btn-login">
+Login <span>→</span>
+</a>
+</div>
+
+</div>
+
+<div class="hero-right">
+
+<div class="secure-box">
+
+<h3>Secure Access</h3>
+
+<p>
+Only authorized users can login to view or search the database by State, Local Government or Ward.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+</body>
 </html>

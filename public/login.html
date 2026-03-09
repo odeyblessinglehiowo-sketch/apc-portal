@@ -1,104 +1,415 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Portal Login</title>
-    <style>
-      :root{
-        --ng-green:#008751;
-        --ng-green-dark:#006b40;
-        --white:#ffffff;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Voters Database Portal</title>
+
+  <style>
+    :root{
+      --apc-green:#008751;
+      --apc-dark:#006b40;
+      --white:#ffffff;
+      --text-light:rgba(255,255,255,0.94);
+      --text-soft:rgba(255,255,255,0.88);
+      --input-bg:#efefef;
+      --card-text:#2f2f2f;
+      --shadow:0 16px 40px rgba(0,0,0,0.20);
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, Helvetica, sans-serif;
+    }
+
+    html, body{
+      min-height:100%;
+      overflow-x:hidden;
+      background:var(--apc-green);
+    }
+
+    body{
+      min-height:100vh;
+      color:white;
+      position:relative;
+    }
+
+    /* Leaders images */
+    .leaders{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+    }
+
+    .leaders img{
+      position:absolute;
+      bottom:0;
+      height:90vh;
+      max-height:96%;
+      object-fit:contain;
+      opacity:0.7;
+    }
+
+    .shettima{
+      left:-250px;
+    }
+
+    .tinubu{
+      right:-250px;
+    }
+
+    /* Green overlay fading into white */
+    .overlay{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      background:
+        linear-gradient(
+          to bottom,
+          rgba(0,135,81,0.68) 0%,
+          rgba(0,135,81,0.68) 58%,
+          rgba(0,135,81,0.52) 74%,
+          rgba(255,255,255,0.94) 91%,
+          rgba(255,255,255,1) 100%
+        );
+    }
+
+    /* Nigeria map */
+    .map-layer{
+      position:fixed;
+      inset:0;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      opacity:0.22;
+      z-index:2;
+      pointer-events:none;
+    }
+
+    .map-layer img{
+      width:min(830px, 86vw);
+      max-width:90%;
+      object-fit:contain;
+    }
+
+    /* Main page */
+    .page{
+      position:relative;
+      z-index:3;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* Navbar */
+    .navbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:14px 30px;
+      background:rgba(0,98,58,0.92);
+      backdrop-filter:blur(4px);
+      box-shadow:0 8px 24px rgba(0,0,0,0.14);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:700;
+      font-size:1.45rem;
+      color:white;
+      text-decoration:none;
+    }
+
+    .brand img{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      background:white;
+      object-fit:contain;
+      padding:2px;
+    }
+
+    .nav-link{
+      color:white;
+      text-decoration:none;
+      font-weight:600;
+      font-size:1rem;
+    }
+
+    .nav-link:hover{
+      opacity:0.85;
+    }
+
+    /* Login section */
+    .login-section{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:48px 24px 120px;
+    }
+
+    .login-wrap{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .login-card-wrap{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      width:100%;
+    }
+
+    .login-card{
+      background:white;
+      color:var(--card-text);
+      width:550px;
+      max-width:100%;
+      padding:25px 25px 20px;
+      border-radius:22px;
+      text-align:center;
+      box-shadow:var(--shadow);
+    }
+
+    .login-card h2{
+      color:var(--apc-green);
+      margin-bottom:24px;
+      font-size:1.9rem;
+    }
+
+    .input-group{
+      margin-bottom:18px;
+    }
+
+    .input-group input{
+      width:100%;
+      padding:14px 16px;
+      border:none;
+      border-radius:22px;
+      background:var(--input-bg);
+      outline:none;
+      font-size:1rem;
+      color:#333;
+    }
+
+    .input-group input::placeholder{
+      color:#666;
+    }
+
+    .login-btn{
+      background:var(--apc-green);
+      color:white;
+      border:none;
+      padding:13px 22px;
+      border-radius:22px;
+      cursor:pointer;
+      width:140px;
+      font-weight:700;
+      font-size:0.98rem;
+      transition:background 0.2s ease, transform 0.15s ease;
+    }
+
+    .login-btn:hover{
+      background:var(--apc-dark);
+      transform:translateY(-1px);
+    }
+
+    .error-text{
+      color:#c62828;
+      font-size:14px;
+      margin-top:14px;
+      min-height:18px;
+    }
+
+    /* Mobile */
+    @media (max-width: 980px){
+      .leaders img{
+        height:72vh;
       }
-      body {
-        font-family: Arial, sans-serif;
-        display:flex;
-        height:100vh;
-        align-items:center;
-        justify-content:center;
-        background: linear-gradient(135deg, var(--ng-green-dark), var(--ng-green));
-        margin:0;
+
+      .shettima{
+        left:-120px;
       }
-      .card {
-        background: rgba(255,255,255,.96);
-        padding:24px;
-        border-radius:14px;
-        width:340px;
-        box-shadow:0 14px 30px rgba(0,0,0,.20);
-        border: 1px solid rgba(0,135,81,.18);
+
+      .tinubu{
+        right:-120px;
       }
-      h2 { margin:0 0 10px 0; color: var(--ng-green-dark); }
-      input, button {
+    }
+
+    @media (max-width: 700px){
+      .leaders img{
+        height:58vh;
+        opacity:0.68;
+      }
+
+      .map-layer{
+        opacity:0.18;
+      }
+
+      .map-layer img{
+        width:min(520px, 92vw);
+      }
+
+      .shettima{
+        left:-90px;
+      }
+
+      .tinubu{
+        right:-90px;
+      }
+    }
+
+    @media (max-width: 600px){
+      .navbar{
+        padding:12px 16px;
+      }
+
+      .brand{
+        font-size:1.1rem;
+        gap:10px;
+      }
+
+      .brand img{
+        width:36px;
+        height:36px;
+      }
+
+      .login-section{
+        padding:34px 16px 110px;
+      }
+
+      .login-card{
         width:100%;
-        padding:12px;
-        margin-top:10px;
-        border-radius:10px;
-        border:1px solid rgba(0,0,0,.12);
-        box-sizing:border-box;
+        max-width:360px;
+        padding:28px 20px 24px;
+        border-radius:20px;
       }
-      input:focus{ outline: 2px solid rgba(0,135,81,.25); border-color: rgba(0,135,81,.35); }
-      button {
-        background: var(--ng-green);
-        color: var(--white);
-        border:none;
-        cursor:pointer;
-        font-weight:800;
+
+      .login-card h2{
+        font-size:1.6rem;
+        margin-bottom:20px;
       }
-      button:hover { background: var(--ng-green-dark); }
-      .err { color:#b00020; margin-top:10px; font-size:14px; }
-      .hint { font-size:12px; opacity:.75; margin-top:12px; color:#223; }
-      .back { display:inline-block; margin-top: 10px; font-size: 13px; color: var(--ng-green-dark); }
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <h2>Login</h2>
-      <input id="email" placeholder="Email" />
-      <input id="password" type="password" placeholder="Password" />
-      <button id="btn">Sign in</button>
 
-      <div class="err" id="err"></div>
-      
-      <a class="back" href="/">← Back to Home</a>
-    </div>
+      .leaders img{
+        height:45vh;
+        opacity:0.52;
+      }
 
-    <script>
-      const existingToken = localStorage.getItem("token");
-      if (existingToken) window.location.href = "/dashboard";
+      .shettima{
+        left:-70px;
+      }
 
-      const btn = document.getElementById("btn");
-      const err = document.getElementById("err");
+      .tinubu{
+        right:-70px;
+      }
+    }
+  </style>
+</head>
 
-      btn.addEventListener("click", async () => {
-        err.textContent = "";
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
+<body>
+  <div class="leaders">
+    <img src="images/shettima.png" alt="Shettima" class="shettima" />
+    <img src="images/tinubu.png" alt="Tinubu" class="tinubu" />
+  </div>
 
-        if (!email || !password) {
-          err.textContent = "Please enter email and password.";
+  <div class="overlay"></div>
+
+  <div class="map-layer">
+    <img src="images/nigeria-map.png" alt="Nigeria Map" />
+  </div>
+
+  <div class="page">
+    <header class="navbar">
+      <a href="/" class="brand">
+        <img src="images/apc-logo.png" alt="APC Logo" />
+        <span>Database Portal</span>
+      </a>
+
+      <a href="/" class="nav-link">Home</a>
+    </header>
+
+    <section class="login-section">
+      <div class="login-wrap">
+        <div class="login-card-wrap">
+          <div class="login-card">
+            <h2>Login</h2>
+
+            <div class="input-group">
+              <input id="email" type="text" placeholder="Email" required />
+            </div>
+
+            <div class="input-group">
+              <input id="password" type="password" placeholder="Password" required />
+            </div>
+
+            <button class="login-btn" id="loginBtn">Sign in</button>
+
+            <div class="error-text" id="errorText"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const existingToken = localStorage.getItem("token");
+    if (existingToken) {
+      window.location.href = "/dashboard";
+    }
+
+    const loginBtn = document.getElementById("loginBtn");
+    const errorText = document.getElementById("errorText");
+
+    async function login() {
+      errorText.textContent = "";
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        errorText.textContent = "Please enter email and password.";
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          errorText.textContent = data.message || "Login failed.";
           return;
         }
 
-        try {
-          const res = await fetch("/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-          });
+        localStorage.setItem("token", data.token);
+localStorage.removeItem("is2FAVerified");
+window.location.href = "/authenticator.html";
+      } catch (err) {
+        errorText.textContent = "Network error. Try again.";
+      }
+    }
 
-          const data = await res.json().catch(() => ({}));
+    loginBtn.addEventListener("click", login);
 
-          if (!res.ok) {
-            err.textContent = data.message || "Login failed.";
-            return;
-          }
+    document.getElementById("password").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") login();
+    });
 
-          localStorage.setItem("token", data.token);
-          window.location.href = "/dashboard";
-        } catch (e) {
-          err.textContent = "Network error. Try again.";
-        }
-      });
-    </script>
-  </body>
+    document.getElementById("email").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") login();
+    });
+  </script>
+</body>
 </html>
