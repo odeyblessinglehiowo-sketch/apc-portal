@@ -396,23 +396,21 @@
       <div class="tableWrap">
         <table>
           <thead>
-            <thead>
-<tr>
-<th>S/N</th>
-<th>Name</th>
-<th>Phone</th>
-<th>State</th>
-<th>LGA</th>
-<th>Ward</th>
-<th>Polling Unit</th>
-<th>PVC/VIN</th>
-<th>Position</th>
-<th>Age</th>
-<th>Gender</th>
-<th>Support Group</th>
-<th>Actions</th>
-</tr>
-</thead>
+            <tr>
+              <th>S/N</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>State</th>
+              <th>LGA</th>
+              <th>Ward</th>
+              <th>Polling Unit</th>
+              <th>PVC/VIN</th>
+              <th>Position</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Support Group</th>
+              <th>Actions</th>
+            </tr>
           </thead>
           <tbody id="tbody"></tbody>
         </table>
@@ -574,39 +572,28 @@
         rows.forEach((r, index) => {
           const tr = document.createElement("tr");
           const rowNumber = ((currentPage - 1) * currentLimit) + index + 1;
-
           const name = r.name ?? r.full_name ?? "";
-          const phone = r.phone ?? "";
-          const state = r.state ?? "";
-          const lga = r.lga ?? "";
-          const ward = r.ward ?? "";
-          const polling_unit = r.polling_unit ?? "";
-          const pvc_vin = r.pvc_vin ?? "";
-          const position = r.position ?? "";
-          const age = r.age ?? "";
-          const gender = r.gender ?? "";
-          const support_group = r.support_group ?? "";
 
-         tr.innerHTML = `
-<td data-label="S/N">${rowNumber}</td>
-<td data-label="Name">${safe(name)}</td>
-<td data-label="Phone">${safe(r.phone)}</td>
-<td data-label="State">${safe(r.state)}</td>
-<td data-label="LGA">${safe(r.lga)}</td>
-<td data-label="Ward">${safe(r.ward)}</td>
-<td data-label="Polling Unit">${safe(r.polling_unit)}</td>
-<td data-label="PVC/VIN">${safe(r.pvc_vin)}</td>
-<td data-label="Position">${safe(r.position)}</td>
-<td data-label="Age">${safe(r.age)}</td>
-<td data-label="Gender">${safe(r.gender)}</td>
-<td data-label="Support Group">${safe(r.support_group)}</td>
-<td data-label="Actions">
-<div class="actions">
-<button class="btn-small btn-edit" data-action="edit" data-id="${r.id}">Edit</button>
-<button class="btn-small btn-danger" data-action="del" data-id="${r.id}">Delete</button>
-</div>
-</td>
-`;
+          tr.innerHTML = `
+            <td data-label="S/N">${rowNumber}</td>
+            <td data-label="Name">${safe(name)}</td>
+            <td data-label="Phone">${safe(r.phone)}</td>
+            <td data-label="State">${safe(r.state)}</td>
+            <td data-label="LGA">${safe(r.lga)}</td>
+            <td data-label="Ward">${safe(r.ward)}</td>
+            <td data-label="Polling Unit">${safe(r.polling_unit)}</td>
+            <td data-label="PVC/VIN">${safe(r.pvc_vin)}</td>
+            <td data-label="Position">${safe(r.position)}</td>
+            <td data-label="Age">${safe(r.age)}</td>
+            <td data-label="Gender">${safe(r.gender)}</td>
+            <td data-label="Support Group">${safe(r.support_group)}</td>
+            <td data-label="Actions">
+              <div class="actions">
+                <button class="btn-small btn-edit" data-action="edit" data-id="${r.id}">Edit</button>
+                <button class="btn-small btn-danger" data-action="del" data-id="${r.id}">Delete</button>
+              </div>
+            </td>
+          `;
 
           tr.dataset.record = JSON.stringify(r);
           tbody.appendChild(tr);

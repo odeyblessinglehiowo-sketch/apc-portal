@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-console.log("✅ RUNNING SERVER VERSION: FULL V7 (AUTHENTICATOR + USERS + EXPANDED RECORDS)");
+console.log("✅ RUNNING SERVER VERSION: FULL V8 (AUTHENTICATOR + USERS + EXPANDED RECORDS + CLEAN SORT)");
 
 const app = express();
 app.use(express.json());
@@ -217,6 +217,7 @@ app.get("/api/records", requireAuth, async (req, res) => {
     const dataRes = await pool.query(
       `SELECT id,
               full_name AS name,
+              full_name,
               phone,
               state,
               lga,
@@ -229,7 +230,7 @@ app.get("/api/records", requireAuth, async (req, res) => {
               support_group
        FROM records
        ${whereSql}
-       ORDER BY id DESC
+       ORDER BY (state IS NULL), (lga IS NULL), (ward IS NULL), id DESC
        LIMIT $${i++} OFFSET $${i++}`,
       values
     );
@@ -261,15 +262,6 @@ app.post("/api/records", requireAuth, async (req, res) => {
     const age = payload.age ? String(payload.age).trim() : "";
     const gender = (payload.gender || "").trim();
     const support_group = (payload.support_group || "").trim();
-
-    const missing = requireFields(
-      { full_name, phone, state, lga, ward },
-      ["full_name", "phone", "state", "lga", "ward"]
-    );
-
-    if (missing.length) {
-      return res.status(400).json({ message: `Missing fields: ${missing.join(", ")}` });
-    }
 
     const created = await pool.query(
       `INSERT INTO records (
@@ -334,15 +326,6 @@ app.put("/api/records/:id", requireAuth, async (req, res) => {
       : (oldRecord.age || "");
     const gender = (payload.gender || oldRecord.gender || "").trim();
     const support_group = (payload.support_group || oldRecord.support_group || "").trim();
-
-    const missing = requireFields(
-      { full_name, phone, state, lga, ward },
-      ["full_name", "phone", "state", "lga", "ward"]
-    );
-
-    if (missing.length) {
-      return res.status(400).json({ message: `Missing fields: ${missing.join(", ")}` });
-    }
 
     const updatedRes = await pool.query(
       `UPDATE records
